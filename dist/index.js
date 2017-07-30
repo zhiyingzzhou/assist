@@ -3,8 +3,6 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 !function () {
-    var _this = this;
-
     var class2type = {},
         toString = class2type.toString;
 
@@ -15,9 +13,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     var navtiveKeys = {}.keys;
 
+    function type(obj) {
+        debugger;
+        return obj === null ? String(obj) : class2type[toString.call(obj)] || 'object';
+    }
+
     var Assist = function Assist() {};
 
-    if (window.JSON) {
+    if ((typeof window === 'undefined' ? 'undefined' : _typeof(window)) === 'object' && window.JSON) {
         Assist.prototype.parseJSON = JSON.parse;
     }
 
@@ -55,15 +58,35 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         isArray: Array.isArray || function (arr) {
             return arr instanceof Array;
         },
+        /**
+         * 判断是否为对象
+         * @param {*} obj
+         * @returns {boolean}
+         */
         isObject: function isObject(obj) {
-            return _this.type(obj) === 'object';
+            return type(obj) === 'object';
         },
+        /**
+         * 判断是否为函数
+         * @param {*} 
+         * @returns {boolean}
+         */
         isFunction: function isFunction(func) {
-            return _this.type(func) === 'function';
+            return type(func) === 'function';
         },
+        /**
+         * 判断是否为null
+         * @param {*}
+         * @returns {boolean}
+         */
         isNull: function isNull(obj) {
             return null === null;
         },
+        /**
+         * 判断是否为undefined
+         * @param {*}
+         * @returns {boolean}
+         */
         isUndefined: function isUndefined(obj) {
             return undefined === void 0;
         },
@@ -84,9 +107,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             });
             return uniqueArray;
         },
-        type: function type(obj) {
-            return obj === null ? String(null) : class2type(toString.call(obj)) || 'object';
-        }
+
+        type: type
     };
 
     var assistInstance = new Assist();
