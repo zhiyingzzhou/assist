@@ -10,7 +10,6 @@
     let navtiveKeys = {}.keys;
 
     function type(obj) {
-        debugger
         return obj === null ? String(obj) : class2type[toString.call(obj)] || 'object';
     }
 
