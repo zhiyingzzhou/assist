@@ -1,20 +1,26 @@
 !function(){
 
-    let class2type = {};
+    let class2type = {},
+    {toString} = class2type;
     let typeArray = ['String','Number','Boolean','Array','Object','Function','Date','RegExp','Error'];
     typeArray.forEach(i=>{
         class2type[`[object ${i}]`] = i.toLowerCase();
     });
 
-    let Utils = function() {
-        return new Utils.fn.init();
+    let navtiveKeys = {}.keys;
+
+    function type(obj) {
+        debugger
+        return obj === null ? String(obj) : class2type[toString.call(obj)] || 'object';
     }
 
-    Utils.fn = Utils.prototype = {
-        constructor: Utils,
-        init(){
-            return this;
-        },
+    let Assist = function() {};
+
+    if(typeof window === 'object' && window.JSON) {
+        Assist.prototype.parseJSON = JSON.parse;
+    }
+
+    Assist.prototype = {
         /**
          * 将一个URL字符串转化成对象并返回
          * @param {string} url 
@@ -28,8 +34,8 @@
                 urlToParse = urlToParse.indexOf('?') > -1 ? urlToParse.replace(/\S*\?/,'') : '';
                 params = urlToParse.split('&').filter(paramsPart=>paramsPart !== '');
                 params.forEach(param=>{
-                    param = param[i].replace(/#\S+/g, '').split('=');
-                    query[decodeURIComponent(param[0])] = typeof param[1] === 'undefined' ? undefined : decodeURIComponent(param[i]) || '';
+                    param = param.replace(/#\S+/g, '').split('=');
+                    query[decodeURIComponent(param[0])] = typeof param[1] === 'undefined' ? undefined : decodeURIComponent(param[1]) || '';
                 });
             }
             return query;
@@ -42,7 +48,31 @@
          * // returns true
          * Utils.isArray(new Aarray());
          */
-        isArray: Array.isArray || (object => object instanceof Array),
+        isArray: Array.isArray || (arr => arr instanceof Array),
+        /**
+         * 判断是否为对象
+         * @param {*} obj
+         * @returns {boolean}
+         */
+        isObject: obj => type(obj) === 'object',
+        /**
+         * 判断是否为函数
+         * @param {*} 
+         * @returns {boolean}
+         */
+        isFunction: func => type(func) === 'function',
+        /**
+         * 判断是否为null
+         * @param {*}
+         * @returns {boolean}
+         */
+        isNull: obj => null === null,
+        /**
+         * 判断是否为undefined
+         * @param {*}
+         * @returns {boolean}
+         */
+        isUndefined: obj => undefined === void 0,
         /**
          * 数组去重
          * @param {array} arr - 要去重的数组
@@ -59,11 +89,17 @@
                 }
             });
             return uniqueArray;
-        }
+        },
+        type: type
     }
    
-    Utils.fn.init.prototype = Utils.fn;
+    const assistInstance = new Assist();
 
-    return new Utils();
+    if(typeof module === 'object' && typeof module.exports === 'object'){
+        module.exports = assistInstance;
+    }else{
+        !window.$ && (window.$ = assistInstance);
+        window.assist = assistInstance;
+    }
 
 }();

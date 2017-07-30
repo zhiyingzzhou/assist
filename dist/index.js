@@ -1,23 +1,27 @@
 'use strict';
 
-!function () {
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-    var class2type = {};
+!function () {
+    var _this = this;
+
+    var class2type = {},
+        toString = class2type.toString;
+
     var typeArray = ['String', 'Number', 'Boolean', 'Array', 'Object', 'Function', 'Date', 'RegExp', 'Error'];
     typeArray.forEach(function (i) {
         class2type['[object ' + i + ']'] = i.toLowerCase();
     });
 
-    var Utils = function Utils() {
-        return new Utils.fn.init();
-    };
+    var navtiveKeys = {}.keys;
 
-    Utils.fn = Utils.prototype = {
-        constructor: Utils,
-        init: function init() {
-            return this;
-        },
+    var Assist = function Assist() {};
 
+    if (window.JSON) {
+        Assist.prototype.parseJSON = JSON.parse;
+    }
+
+    Assist.prototype = {
         /**
          * 将一个URL字符串转化成对象并返回
          * @param {string} url 
@@ -33,8 +37,8 @@
                     return paramsPart !== '';
                 });
                 params.forEach(function (param) {
-                    param = param[i].replace(/#\S+/g, '').split('=');
-                    query[decodeURIComponent(param[0])] = typeof param[1] === 'undefined' ? undefined : decodeURIComponent(param[i]) || '';
+                    param = param.replace(/#\S+/g, '').split('=');
+                    query[decodeURIComponent(param[0])] = typeof param[1] === 'undefined' ? undefined : decodeURIComponent(param[1]) || '';
                 });
             }
             return query;
@@ -48,8 +52,20 @@
          * // returns true
          * Utils.isArray(new Aarray());
          */
-        isArray: Array.isArray || function (object) {
-            return object instanceof Array;
+        isArray: Array.isArray || function (arr) {
+            return arr instanceof Array;
+        },
+        isObject: function isObject(obj) {
+            return _this.type(obj) === 'object';
+        },
+        isFunction: function isFunction(func) {
+            return _this.type(func) === 'function';
+        },
+        isNull: function isNull(obj) {
+            return null === null;
+        },
+        isUndefined: function isUndefined(obj) {
+            return undefined === void 0;
         },
         /**
          * 数组去重
@@ -67,15 +83,18 @@
                 }
             });
             return uniqueArray;
+        },
+        type: function type(obj) {
+            return obj === null ? String(null) : class2type(toString.call(obj)) || 'object';
         }
     };
 
-    Utils.fn.init.prototype = Utils.fn;
+    var assistInstance = new Assist();
 
-    if(typeof module === 'object' && typeof module.exports === 'object'){
-        module.exports = Utils;
-    }else{
-        return Utils;
+    if ((typeof module === 'undefined' ? 'undefined' : _typeof(module)) === 'object' && _typeof(module.exports) === 'object') {
+        module.exports = assistInstance;
+    } else {
+        !window.$ && (window.$ = assistInstance);
+        window.assist = assistInstance;
     }
-
 }();
