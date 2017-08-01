@@ -45,7 +45,7 @@
          * @returns {boolean} 如果传入的对象是一个数组,返回true,否则返回false
          * @example
          * // returns true
-         * Utils.isArray(new Aarray());
+         * Assist.isArray(new Aarray());
          */
         isArray: Array.isArray || (arr => arr instanceof Array),
         /**
@@ -73,12 +73,28 @@
          */
         isUndefined: obj => undefined === void 0,
         /**
+         * 判断是否为空对象
+         * @param {object} obj 要判断的对象
+         * @return {boolean} 如果对象为空,返回true
+         * @example 
+         * // returns true
+         * Assist.isEmptyObject(new Object())
+         */
+        isEmptyObject(obj){
+            for(let name in obj){
+                if(name !== void 0){
+                    return false;
+                }
+            }
+            return true;
+        },
+        /**
          * 数组去重
          * @param {array} arr - 要去重的数组
          * @returns {array} 返回去重后的数组
          * @example
          * // returns [1,2]
-         * Utils.unique([1,2,1,2]);
+         * Assist.unique([1,2,1,2]);
          */
         unique(arr) {
             let uniqueArray = [];
